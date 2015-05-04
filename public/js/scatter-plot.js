@@ -2,14 +2,6 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
 
-var dataStats = {
-  count: { }
-};
-var weekdayRef = { name: [ "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" ], number: [1,2,3,4,5,6,7] };
-for (i in weekdayRef.name) { dataStats.count[weekdayRef.name[i]] = 0; }
-
-console.log(dataStats);
-
 var x = d3.scale.linear()
     .range([0, width]);
 
@@ -32,28 +24,14 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("public/data/events.tsv", function(error, data) {
-  var count = {
-    weekday: [0, 0, 0, 0, 0, 0, 0],
-    type: {}
-  };
+d3.tsv("public/data/d3/scatter-plot.tsv", function(error, data) {
   data.forEach(function(d) {
-    d.type = d.type;
-    d.id = d.id;
-    d.guardian = d.guardian;
-    d.time = new Date(d.time);
-    d.unixtime = (new Date((+d.unixtime)*1000)).valueOf();
-    d.weekday = d.weekday;
-    d.weekday_num = +d.weekday_num;
-    count.weekday[d.weekday_num-1]++;
-    d.hour = +d.hour;
-    d.day_night = d.day_night;
-    d.seek = d.seek;
-    d.location = d.location;
+    d.sepalLength = +d.sepalLength;
+    d.sepalWidth = +d.sepalWidth;
   });
 
-  x.domain(d3.extent(data, function(d) { return d.weekday_num; })).nice();
-  y.domain(d3.extent(data, function(d) { return d.hour; })).nice();
+  x.domain(d3.extent(data, function(d) { return d.sepalWidth; })).nice();
+  y.domain(d3.extent(data, function(d) { return d.sepalLength; })).nice();
 
   svg.append("g")
       .attr("class", "x axis")
@@ -64,7 +42,7 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Day of Week");
+      .text("Sepal Width (cm)");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -75,17 +53,16 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Hour of Day")
+      .text("Sepal Length (cm)")
 
   svg.selectAll(".dot")
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
       .attr("r", 3.5)
-      .attr("cx", function(d) { return x(d.weekday_num); })
-      .attr("cy", function(d) { return y(d.hour); })
-      .style("fill", function(d) { return color(d.type); })
-      ;
+      .attr("cx", function(d) { return x(d.sepalWidth); })
+      .attr("cy", function(d) { return y(d.sepalLength); })
+      .style("fill", function(d) { return color(d.species); });
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
