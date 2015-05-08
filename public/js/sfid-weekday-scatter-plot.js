@@ -10,7 +10,9 @@ for (i in weekdayRef.name) { dataStats.count[weekdayRef.name[i]] = 0; }
 
 console.log(dataStats);
 
-var pointCount = {}; for (i in weekdayRef.name) { pointCount[weekdayRef.name[i]] = {}; for (var j = 0; j < 24; j++) { pointCount[weekdayRef.name[i]][""+j] = 0; } }
+var pointCount = {}; for (i in weekdayRef.name) { pointCount[weekdayRef.name[i]] = {}; for (var j = 0; j < 24; j++) {
+  pointCount[weekdayRef.name[i]][""+j] = { truck:0, motorcycle:0, chainsaw:0, car:0 };
+} }
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -53,7 +55,7 @@ d3.tsv("public/data/events.tsv", function(error, data) {
     d.location = d.location;
     d.type = d.type;
 
-    pointCount[d.weekday][""+d.hour]++;
+    pointCount[d.weekday][""+d.hour][d.type]++;
     
     if (d.type == "car") { d.weekday_num = d.weekday_num - 0.15; }
     else if (d.type == "chainsaw") { d.weekday_num = d.weekday_num - 0.05; }
@@ -93,11 +95,12 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function(d) { return 2*Math.sqrt(pointCount[d.weekday][""+d.hour]); })
+      .attr("r", function(d) { var out = Math.sqrt(20*pointCount[d.weekday][""+d.hour][d.type]/3.141593); if (out > 12) out = 12; return out; })
       .attr("cx", function(d) { return x(d.weekday_num); })
       .attr("cy", function(d) { return y(d.hour); })
       .style("fill", function(d) { return color(d.type); })
       ;
+
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
