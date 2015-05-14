@@ -10,9 +10,9 @@ for (i in weekdayRef.name) { dataStats.count[weekdayRef.name[i]] = 0; }
 
 console.log(dataStats);
 
-var pointCount = {}; for (i in weekdayRef.name) { pointCount[weekdayRef.name[i]] = {}; for (var j = 0; j < 24; j++) {
-  pointCount[weekdayRef.name[i]][""+j] = { truck:0, motorcycle:0, chainsaw:0, car:0 };
-} }
+// var pointCount = {}; for (i in weekdayRef.name) { pointCount[weekdayRef.name[i]] = {}; for (var j = 0; j < 24; j++) {
+//   pointCount[weekdayRef.name[i]][""+j] = { truck:0, motorcycle:0, chainsaw:0, car:0 };
+// } }
 
 var x = d3.scale.linear()
     .range([0, width]);
@@ -36,7 +36,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("public/data/events.tsv", function(error, data) {
+d3.tsv("public/data/events-by-type/events-"+type+".tsv", function(error, data) {
   var count = {
     weekday: [0, 0, 0, 0, 0, 0, 0],
     type: {}
@@ -50,21 +50,22 @@ d3.tsv("public/data/events.tsv", function(error, data) {
     d.weekday_num = +d.weekday_num;
     count.weekday[d.weekday_num-1]++;
     d.hour = +d.hour;
+      d.hour = d.hour+(d.time.getMinutes()/60);
     d.day_night = d.day_night;
     d.seek = d.seek;
     d.location = d.location;
     d.type = d.type;
 
-    pointCount[d.weekday][""+d.hour][d.type]++;
+//    pointCount[d.weekday][""+d.hour][d.type]++;
     
-    if (d.type == "car") { d.weekday_num = d.weekday_num - 0.21; }
-    else if (d.type == "chainsaw") { d.weekday_num = d.weekday_num - 0.07; }
-    else if (d.type == "motorcycle") { d.weekday_num = d.weekday_num + 0.07; }
-    else if (d.type == "truck") { d.weekday_num = d.weekday_num + 0.21; }
+    // if (d.type == "car") { d.weekday_num = d.weekday_num - 0.21; }
+    // else if (d.type == "chainsaw") { d.weekday_num = d.weekday_num - 0.07; }
+    // else if (d.type == "motorcycle") { d.weekday_num = d.weekday_num + 0.07; }
+    // else if (d.type == "truck") { d.weekday_num = d.weekday_num + 0.21; }
 
   });
 
-  console.log(pointCount);
+//  console.log(pointCount);
 
   x.domain(d3.extent(data, function(d) { return d.weekday_num; })).nice();
   y.domain(d3.extent(data, function(d) { return d.hour; })).nice();
@@ -95,7 +96,7 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function(d) { var out = Math.sqrt(30*pointCount[d.weekday][""+d.hour][d.type]/3.141593); if (out > 10) out = 10; return out; })
+      .attr("r", function(d) { return 2; })
       .attr("cx", function(d) { return x(d.weekday_num); })
       .attr("cy", function(d) { return y(d.hour); })
       .style("fill", function(d) { return color(d.type); })
