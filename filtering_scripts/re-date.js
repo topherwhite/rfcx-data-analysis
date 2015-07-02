@@ -6,7 +6,7 @@ var arg = args[0];
 
 var fs = require("fs");
 
-var rows = fs.readFileSync("/Users/topher/code/rfcx/data-sfid/public/data/events-filtered.txt","utf8").split("\r");
+var rows = fs.readFileSync("./../public/data/events-filtered.tsv","utf8").split("\r");
 
 for (i in rows) {
   var row = rows[i].split("\t");

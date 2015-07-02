@@ -36,7 +36,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("public/data/events-filtered.txt", function(error, data) {
+d3.tsv("public/data/events-filtered.tsv", function(error, data) {
   var count = {
     weekday: [0, 0, 0, 0, 0, 0, 0],
     type: {}
