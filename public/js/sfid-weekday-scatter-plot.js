@@ -1,6 +1,6 @@
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 640 - margin.top - margin.bottom;
+    width = 800 - margin.left - margin.right,
+    height = 360 - margin.top - margin.bottom;
 
 var dataStats = {
   count: { }
@@ -36,7 +36,7 @@ var svg = d3.select("body").append("svg")
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-d3.tsv("public/data/events.tsv", function(error, data) {
+d3.tsv("public/data/events-filtered.txt", function(error, data) {
   var count = {
     weekday: [0, 0, 0, 0, 0, 0, 0],
     type: {}
@@ -78,6 +78,7 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
+      .style("font-size", "16px")
       .text("Day of Week");
 
   svg.append("g")
@@ -89,13 +90,14 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
+      .style("font-size", "16px")
       .text("Hour of Day")
 
   svg.selectAll(".dot")
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
-      .attr("r", function(d) { var out = Math.sqrt(30*pointCount[d.weekday][""+d.hour][d.type]/3.141593); if (out > 10) out = 10; return out; })
+      .attr("r", function(d) { var out = Math.sqrt(60*pointCount[d.weekday][""+d.hour][d.type]/3.141593); if (out > 10) out = 10; return out; })
       .attr("cx", function(d) { return x(d.weekday_num); })
       .attr("cy", function(d) { return y(d.hour); })
       .style("fill", function(d) { return color(d.type); })
@@ -119,6 +121,7 @@ d3.tsv("public/data/events.tsv", function(error, data) {
       .attr("y", 9)
       .attr("dy", ".35em")
       .style("text-anchor", "end")
+      .style("font-size", "18px")
       .text(function(d) { return d; });
 
 });
